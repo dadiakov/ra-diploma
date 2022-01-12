@@ -9,6 +9,7 @@ import About from './components/About';
 import Contacts from './components/Contacts';
 import Catalog from './components/Catalog';
 import ItemCard from './components/ItemCard';
+import Cart from './components/Cart';
 
 
 export default function App() {
@@ -21,6 +22,7 @@ export default function App() {
             <Route path="/catalog" component={Catalog} />
             <Route path="/contacts" component={Contacts} />
             <Route path="/about" component={About} />
+            <Route path="/cart" component={Cart} />
             <Route exact path="/" component={IndexPage}/>
             <Route component={Page404} />
           </Switch>

@@ -1,3 +1,5 @@
 export const SET_ACTIVE_CATEGORIE = 'SET_CATEGORIE';
 export const SET_SEARCH_DATA = 'SET_SEARCH_DATA';
 export const SET_ITEM_TO_BUY = 'SET_ITEM_TO_BUY';
+export const ADD_TO_CART = 'ADD_TO_CART';
+export const REMOVE_FROM_CART = 'REMOVE_FROM_CART';

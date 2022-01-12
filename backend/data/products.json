@@ -1669,7 +1669,7 @@
             },
             {
                 "size": "18 US",
-                "avalible": false
+                "avalible": true
             }
         ]
     }

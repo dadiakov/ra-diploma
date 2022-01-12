@@ -4,7 +4,8 @@ import Preloader from "./Preloader";
 import bannerPic from '../img/banner.jpg';
 import { nanoid } from 'nanoid';
 import { useSelector, useDispatch } from 'react-redux';
-import { setItemToBuy } from "../actions/actionCreators";
+import { setItemToBuy, addToCart } from "../actions/actionCreators";
+import { useHistory } from 'react-router-dom';
 
 export default function ItemCard({ match: { params: { id }} }) {
 
@@ -21,9 +22,11 @@ export default function ItemCard({ match: { params: { id }} }) {
             setItem(data);
             setLoading(false);
             dispatch(setItemToBuy({
+                id: data.id,
                 sku: data.sku,
                 title: data.title,
                 price: data.price,
+                size: null,
                 qty: 1
             }));
         } catch (error) {
@@ -54,6 +57,14 @@ export default function ItemCard({ match: { params: { id }} }) {
         if(itemToBuy.qty < 10) {
             const newQty = +itemToBuy.qty + 1;
             dispatch(setItemToBuy({qty: newQty}))}
+    }
+
+    const history = useHistory();
+
+    const addItemToCart = () => {
+        dispatch(addToCart(itemToBuy));
+        const path = "/cart"; 
+        history.push(path);
     }
 
     return ( loading ? <Preloader /> :
@@ -116,8 +127,11 @@ export default function ItemCard({ match: { params: { id }} }) {
                                                     </span>
                                                 </p>
                                             </div>
-                                            <button onClick={()=>console.log(itemToBuy)}className="btn btn-danger btn-block btn-lg">В корзину</button>
                                         </React.Fragment> : null}
+                                        {!item.sizes.every(size => !size.avalible) && itemToBuy.size ? 
+                                            <button onClick={addItemToCart} className="btn btn-danger btn-block btn-lg">В корзину</button> : null 
+                                        }
+                                        
                                 </div>
                             </div>
                         </section>
