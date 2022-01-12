@@ -2,11 +2,17 @@
 import React, { useEffect, useState } from "react";
 import Preloader from "./Preloader";
 import bannerPic from '../img/banner.jpg';
+import { nanoid } from 'nanoid';
+import { useSelector, useDispatch } from 'react-redux';
+import { setItemToBuy } from "../actions/actionCreators";
 
 export default function ItemCard({ match: { params: { id }} }) {
 
-    const [item, setItem] = useState({});
     const [loading, setLoading] = useState(true);
+    const itemToBuy = useSelector((state) => state.itemToBuyReducer);
+    const [item, setItem] = useState({});
+    
+    const dispatch = useDispatch();
     
     const getData = async () => {
         try {
@@ -14,6 +20,12 @@ export default function ItemCard({ match: { params: { id }} }) {
             const data = await json.json();
             setItem(data);
             setLoading(false);
+            dispatch(setItemToBuy({
+                sku: data.sku,
+                title: data.title,
+                price: data.price,
+                qty: 1
+            }));
         } catch (error) {
             console.log(error)            
         }
@@ -22,6 +34,27 @@ export default function ItemCard({ match: { params: { id }} }) {
     useEffect(()=>{
         getData()
     },[])
+
+    const changeSize = (evt) => {
+        const el = evt.target;
+        setItemToBuy({size: el.textContent})
+        el.closest('.text-center').querySelectorAll('.catalog-item-size').forEach(e => {
+            e.className = 'catalog-item-size';
+        })
+        dispatch(setItemToBuy({size: el.textContent}));        
+    }
+
+    const qtyDec = () => {
+        if(itemToBuy.qty > 1) {
+            const newQty = +itemToBuy.qty - 1;
+            dispatch(setItemToBuy({qty: newQty}))}
+    }
+
+    const qtyInc = () => {
+        if(itemToBuy.qty < 10) {
+            const newQty = +itemToBuy.qty + 1;
+            dispatch(setItemToBuy({qty: newQty}))}
+    }
 
     return ( loading ? <Preloader /> :
         <React.Fragment>
@@ -45,40 +78,46 @@ export default function ItemCard({ match: { params: { id }} }) {
                                         <tbody>
                                             <tr>
                                                 <td>Артикул</td>
-                                                <td>{item.sku}</td>
+                                                <td>{item.sku || null}</td>
                                             </tr>
                                             <tr>
                                                 <td>Производитель</td>
-                                                <td>{item.manufacturer}</td>
+                                                <td>{item.manufacturer || null}</td>
                                             </tr>
                                             <tr>
                                                 <td>Цвет</td>
-                                                <td>{item.color}</td>
+                                                <td>{item.color || null}</td>
                                             </tr>
                                             <tr>
                                                 <td>Материалы</td>
-                                                <td>{item.material}</td>
+                                                <td>{item.material || null}</td>
                                             </tr>
                                             <tr>
                                                 <td>Сезон</td>
-                                                <td>{item.season}</td>
+                                                <td>{item.season || null}</td>
                                             </tr>
                                             <tr>
                                                 <td>Повод</td>
-                                                <td>{item.reason}</td>
+                                                <td>{item.reason || null}</td>
                                             </tr>
                                         </tbody>
                                     </table>
-                                    <div className="text-center">
-                                        <p>Размеры в наличии: <span className="catalog-item-size selected">18 US</span> <span className="catalog-item-size">20 US</span></p>
-                                        <p>Количество: <span className="btn-group btn-group-sm pl-2">
-                                                <button className="btn btn-secondary">-</button>
-                                                <span className="btn btn-outline-primary">1</span>
-                                                <button className="btn btn-secondary">+</button>
-                                            </span>
-                                        </p>
-                                    </div>
-                                    <button className="btn btn-danger btn-block btn-lg">В корзину</button>
+                                    {!item.sizes.every(size => !size.avalible) ?
+                                        <React.Fragment>
+                                            <div className="text-center">
+                                                <p>Размеры в наличии: {item.sizes? item.sizes.map(size => {
+                                                    if (!size.avalible) return null;
+                                                    return <span key={nanoid()} className={itemToBuy.size === size.size ? "catalog-item-size selected" : "catalog-item-size"} onClick={changeSize}>{size.size}</span>
+                                                }) : null}</p>
+                                                <p>Количество: <span className="btn-group btn-group-sm pl-2">
+                                                        <button onClick={qtyDec} className="btn btn-secondary">-</button>
+                                                        <span className="btn btn-outline-primary">{itemToBuy.qty}</span>
+                                                        <button onClick={qtyInc} className="btn btn-secondary">+</button>
+                                                    </span>
+                                                </p>
+                                            </div>
+                                            <button onClick={()=>console.log(itemToBuy)}className="btn btn-danger btn-block btn-lg">В корзину</button>
+                                        </React.Fragment> : null}
                                 </div>
                             </div>
                         </section>
