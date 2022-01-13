@@ -4,13 +4,17 @@ import React, { useEffect, useState } from 'react';
 import Preloader from "./Preloader";
 import { useSelector } from 'react-redux';
 import { NavLink } from 'react-router-dom';
+import Error from "./Error";
 
 export default function Catalogue() {
     const [items, setItems] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
+    const [moreLoading, setMoreLoading] = useState(false);
     const activeCategorie = useSelector((state) => state.activeCategorieReducer);
     const [showButton, setShowButton] = useState(true);
     const searchData = useSelector(state => state.searchDataReducer);
+    const [error, setError] = useState(false);
+    const [moreError, setMoreError] = useState(false);
 
     useEffect(() => {
       setShowButton(true);
@@ -18,6 +22,8 @@ export default function Catalogue() {
     },[activeCategorie, searchData])
 
     const getData = async () => {
+        setLoading(true);
+        setError(false)
         let url = activeCategorie === 'All' ? 'http://localhost:7070/api/items' : `http://localhost:7070/api/items?categoryId=${activeCategorie}`;
         if (searchData) {
           url = activeCategorie === 'All' ? `http://localhost:7070/api/items?q=${searchData}` : `http://localhost:7070/api/items?q=${searchData}&categoryId=${activeCategorie}`;
@@ -28,11 +34,16 @@ export default function Catalogue() {
             setLoading(false);
             setItems(data);
         } catch (error) {
-            console.log(error)
+          setError(true);
+          setLoading(false);
+          setTimeout(() => getData(), 500)  
         }
     }
 
     const getMoreData = async () => {
+      setMoreLoading(true);
+      setMoreError(false);
+      setShowButton(false);
       const numOfCards = document.querySelectorAll('.catalog-item-card').length;
       let url = activeCategorie === 'All' ? `http://localhost:7070/api/items?offset=${numOfCards}` : `http://localhost:7070/api/items?categoryId=${activeCategorie}&offset=${numOfCards}`;
       if (searchData) {
@@ -41,17 +52,21 @@ export default function Catalogue() {
       try {
           const json = await fetch(url);
           const data = await json.json();
-          setLoading(false);
+          setMoreLoading(false);
           setItems(prev => prev.concat(data));            
           if (data.length < 6) {
               setShowButton(false);
+              return;
           }
+          setShowButton(true);
       } catch (error) {
-          console.log(error)
+        setMoreError(true);
+        setMoreLoading(false);
+        setTimeout(() => getMoreData(), 500) 
       }
   }
 
-    return ( loading ? <Preloader /> :
+    return ( loading ? <Preloader /> : error ? <Error /> :
           <React.Fragment>
             <div className='row'>
                 {items.map(item => (
@@ -68,7 +83,7 @@ export default function Catalogue() {
                   </div>
                 ))}
             </div>
-            {showButton ? 
+            {moreLoading ? <Preloader /> : moreError ? <Error /> : showButton ? 
               <div className="text-center">
                 <button className="btn btn-outline-primary" onClick={getMoreData}>Загрузить ещё</button>
               </div> 

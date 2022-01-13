@@ -6,16 +6,20 @@ import { nanoid } from 'nanoid';
 import { useSelector, useDispatch } from 'react-redux';
 import { setItemToBuy, addToCart } from "../actions/actionCreators";
 import { useHistory } from 'react-router-dom';
+import Error from "./Error";
 
 export default function ItemCard({ match: { params: { id }} }) {
 
     const [loading, setLoading] = useState(true);
     const itemToBuy = useSelector((state) => state.itemToBuyReducer);
     const [item, setItem] = useState({});
+    const [error, setError] = useState(false);
     
     const dispatch = useDispatch();
     
     const getData = async () => {
+        setLoading(true);
+        setError(false)
         try {
             const json = await fetch(`http://localhost:7070/api/items/${id}`);
             const data = await json.json();
@@ -23,14 +27,17 @@ export default function ItemCard({ match: { params: { id }} }) {
             setLoading(false);
             dispatch(setItemToBuy({
                 id: data.id,
-                sku: data.sku,
                 title: data.title,
                 price: data.price,
                 size: null,
                 qty: 1
             }));
         } catch (error) {
-            console.log(error)            
+            console.log('ошибка')
+            
+            setError(true);
+            setLoading(false);
+            setTimeout(() => getData(), 500)           
         }
     }
 
@@ -67,7 +74,7 @@ export default function ItemCard({ match: { params: { id }} }) {
         history.push(path);
     }
 
-    return ( loading ? <Preloader /> :
+    return ( loading ? <Preloader /> : error ? <Error /> :
         <React.Fragment>
             <main className="container">
                 <div className="row">

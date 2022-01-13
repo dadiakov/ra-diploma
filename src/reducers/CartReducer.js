@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { ADD_TO_CART, REMOVE_FROM_CART } from '../actions/actionTypes';
+import { ADD_TO_CART, REMOVE_FROM_CART, ADD_ITEMS_TO_CART, CLEAR_CART } from '../actions/actionTypes';
 
 const initialState = [];
 
@@ -18,6 +18,10 @@ export default function CartReducer(state = initialState, action) {
           const newState = [...state];
           const deleted = newState.splice(action.payload, 1);
           return newState;
+      case ADD_ITEMS_TO_CART:
+          return [...action.payload];
+      case CLEAR_CART: 
+          return [];
       default:
         return state;
     }

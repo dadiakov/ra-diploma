@@ -7,6 +7,7 @@ import { useState } from 'react';
 
 export default function Header() {
     const inputData = useSelector(state => state.searchDataReducer);
+    const items = useSelector((state) => state.cartReducer);
     const [input, setInput] = useState(inputData);
     const dispatch = useDispatch();
 
@@ -83,7 +84,7 @@ export default function Header() {
                             ></div>
                             {/* <!-- Do programmatic navigation on click to /cart.html --> */}
                             <div className="header-controls-pic header-controls-cart" onClick={goToCart}>
-                                <div className="header-controls-cart-full">1</div>
+                                {items.length > 0 ? <div className="header-controls-cart-full">{items.length}</div> : null}
                                 <div className="header-controls-cart-menu"></div>
                             </div>
                             </div>

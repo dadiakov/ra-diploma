@@ -311,3 +311,23 @@ h2,
   background-color: #727e86;
   border-color: #727e86;
 }
+
+.order-container {
+  max-width: 30rem;
+  margin: 0 auto;
+}
+
+.error-div {
+  width: 500px;
+  height: 50px;
+  display: flex;
+  position: relative;
+  margin: auto;
+  background-color: red;
+  color: white;
+  font-size: x-large;
+}
+
+.error-div > div {
+  margin: auto;
+}

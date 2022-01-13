@@ -5,6 +5,7 @@ import { nanoid } from 'nanoid';
 import { useSelector, useDispatch } from 'react-redux';
 import { NavLink } from 'react-router-dom';
 import { removeFromCart } from '../actions/actionCreators';
+import Order from './Order';
 
 export default function Cart() {
     const items = useSelector((state) => state.cartReducer);
@@ -17,6 +18,7 @@ export default function Cart() {
             sum += item.price * item.qty
         });
         setTotal(sum);
+        localStorage.setItem('bosa-noga-cart', JSON.stringify(items));
     },[items])
 
     const dispatch = useDispatch();
@@ -66,6 +68,7 @@ export default function Cart() {
               </tbody>
             </table>
           </section>
+          {items.length > 0 ? <Order /> : null}
             </div>
         </div>
         </main>

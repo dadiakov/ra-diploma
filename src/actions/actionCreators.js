@@ -3,7 +3,9 @@ import {
     SET_SEARCH_DATA,
     SET_ITEM_TO_BUY,
     ADD_TO_CART,
-    REMOVE_FROM_CART
+    REMOVE_FROM_CART,
+    ADD_ITEMS_TO_CART,
+    CLEAR_CART
 } from './actionTypes';
 
 export function setActiveCategorie(id) {
@@ -24,4 +26,12 @@ export function addToCart(item) {
 
 export function removeFromCart(index) {
     return {type: REMOVE_FROM_CART, payload: index};
+}
+
+export function addItemsToCart(items) {
+    return {type: ADD_ITEMS_TO_CART, payload: items};
+}
+
+export function clearCart() {
+    return {type: CLEAR_CART};
 }

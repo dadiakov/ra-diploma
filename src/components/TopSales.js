@@ -1,31 +1,38 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect } from "react";
 import { useState } from "react";
 import { NavLink } from 'react-router-dom';
 import Preloader from "./Preloader";
+import Error from "./Error";
 
 export default function TopSales() {
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
     const [items, setItems] = useState([]);
+    const [error, setError] = useState(false);
 
     useEffect(() => {
         getData();
     },[])
 
     const getData = async () => {
+        setLoading(true);
+        setError(false)
         try {
             const json = await fetch('http://localhost:7070/api/top-sales');
             const data = await json.json();
             setLoading(false);
             setItems(data)
         } catch (error) {
-            console.log(error)
+            setError(true);
+            setLoading(false);
+            setTimeout(() => getData(), 500)  
         }
     }
 
     return (
         <section className="top-sales">
         <h2 className="text-center">Хиты продаж!</h2>
-        {loading ? <Preloader /> : null}
+        {loading ? <Preloader /> : error ? <Error /> :
         <div className="row">
             {items.map(item => (
                 <div className="col-4" key={item.id}>
@@ -39,7 +46,7 @@ export default function TopSales() {
                     </div>
                 </div>
             ))}
-        </div>
+        </div>}
       </section>
     )
 }

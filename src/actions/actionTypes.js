@@ -3,3 +3,5 @@ export const SET_SEARCH_DATA = 'SET_SEARCH_DATA';
 export const SET_ITEM_TO_BUY = 'SET_ITEM_TO_BUY';
 export const ADD_TO_CART = 'ADD_TO_CART';
 export const REMOVE_FROM_CART = 'REMOVE_FROM_CART';
+export const ADD_ITEMS_TO_CART = 'ADD_ITEMS_TO_CART';
+export const CLEAR_CART = 'CLEAR_CART';

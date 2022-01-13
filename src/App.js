@@ -10,9 +10,16 @@ import Contacts from './components/Contacts';
 import Catalog from './components/Catalog';
 import ItemCard from './components/ItemCard';
 import Cart from './components/Cart';
+import { useDispatch } from 'react-redux';
+import { addItemsToCart } from './actions/actionCreators';
 
 
 export default function App() {
+  const dispatch = useDispatch();
+  
+  const items = localStorage.getItem('bosa-noga-cart');
+  if (items) dispatch(addItemsToCart(JSON.parse(items)));
+
   return (
     <React.Fragment>
       <Router>
